@@ -5,6 +5,7 @@ module.exports = {
 		// The entry points for the pages
 		pageA: "./aEntry",
 		pageB: "./bEntry",
+		vendorBundle: ["./vendorA", "./vendorB"],
 
 		// This file contains common modules but also the router entry
 		"commons": "./router"
@@ -16,12 +17,20 @@ module.exports = {
 		chunkFilename: "[id].chunk.js"
 	},
 	plugins: [
-		// Extract common modules from the entries to the commons.js file
-		// This is optional, but good for performance.
 		new CommonsChunkPlugin({
-			name: "commons",
-			filename: "commons.js"
+			names: ["pageA", "pageB"],
+			filename: "[name].bundle.js",
+			children: true,
+			deepChildren: true
+		}),
+		new CommonsChunkPlugin({
+			names: ["vendorBundle", "commons"],
+			filename: "[name].js"
+		}),
+		// Extract the webpack boostrapper
+		new CommonsChunkPlugin({
+			name: "webpackManifest",
+			filename: "webpackManifest.js"
 		})
-		// The pages cannot run without the commons.js file now.
 	]
 };
